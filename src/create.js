@@ -76,6 +76,7 @@ function createTableToSQL(stmt) {
     partition_of: partitionOf,
     query_expr: queryExpr,
     with: withExpr,
+    distributed_by: distributedOptions,
   } = stmt
   const sql = [toUpper(type), toUpper(orReplace), toUpper(temporary), toUpper(keyword), toUpper(ifNotExists), tablesToSQL(table)]
   if (like) {
@@ -97,6 +98,10 @@ function createTableToSQL(stmt) {
   }
   sql.push(toUpper(ignoreReplace), toUpper(as))
   if (queryExpr) sql.push(unionToSQL(queryExpr))
+  if (distributedOptions) {
+    const distributedKeys = distributedOptions.keys.value.map(distributedKey => distributedKey.column.expr.value)
+    sql.push(`distributed by (${distributedKeys.join(', ')})`)
+  }
   return sql.filter(hasVal).join(' ')
 }
 

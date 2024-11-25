@@ -134,6 +134,7 @@ function columnIdentifierToSql(ident) {
   switch (database && database.toLowerCase()) {
     case 'db2':
     case 'postgresql':
+    case 'greenplum':
     case 'redshift':
     case 'snowflake':
     case 'noql':
@@ -160,6 +161,7 @@ function identifierToSql(ident, isDual) {
     case 'mariadb':
       return `\`${ident}\``
     case 'postgresql':
+    case 'greenplum':
     case 'redshift':
     case 'snowflake':
     case 'trino':

@@ -12,6 +12,7 @@ import { parse as sqlite } from '../pegjs/sqlite.pegjs'
 import { parse as transactsql } from '../pegjs/transactsql.pegjs'
 import { parse as snowflake } from '../pegjs/snowflake.pegjs'
 import { parse as trino } from '../pegjs/trino.pegjs'
+import { parse as greenplum } from '../pegjs/greenplum.pegjs'
 
 export default {
   athena,
@@ -28,4 +29,5 @@ export default {
   sqlite,
   transactsql,
   trino,
+  greenplum,
 }
