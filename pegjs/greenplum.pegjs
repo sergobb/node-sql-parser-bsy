@@ -4969,7 +4969,7 @@ tablefunc_clause
   }
 
 substring_funcs_clause
-  = 'substring'i __ LPAREN __ s:quoted_ident_type __ COMMA __ start:literal_numeric __ COMMA __ len:literal_numeric __ RPAREN {
+  = 'substring'i __ LPAREN __ s:(quoted_ident_type / expr) __ COMMA __ start:literal_numeric __ COMMA __ len:literal_numeric __ RPAREN {
     // => { type: 'function'; name: 'substring'; args: expr_list; }
       return {
         type: 'function',
@@ -4977,7 +4977,7 @@ substring_funcs_clause
         args: { type: 'expr_list', value: [s, start, len] },
       }
   }
-  / 'substring'i __ LPAREN __ s:quoted_ident_type __ KW_FROM __ start:quoted_ident_type __ len:('FOR'i __ quoted_ident_type)? __ RPAREN {
+  / 'substring'i __ LPAREN __ s:(quoted_ident_type / expr) __ KW_FROM __ start:quoted_ident_type __ len:('FOR'i __ quoted_ident_type)? __ RPAREN {
     // => { type: 'function'; name: 'substring'; args: expr_list; }
       const separator = [{ type: 'origin', value: 'from' }]
       const args = { type: 'expr_list', value: [s, start] }
@@ -4992,7 +4992,7 @@ substring_funcs_clause
         separator
       }
   }
-  / 'substring'i __ LPAREN __ s:quoted_ident_type __ start:(KW_FROM __ literal_numeric)? __ len:('FOR'i __ literal_numeric)? __ RPAREN {
+  / 'substring'i __ LPAREN __ s:(quoted_ident_type / column_clause) __ start:(KW_FROM __ literal_numeric)? __ len:('FOR'i __ literal_numeric)? __ RPAREN {
     // => { type: 'function'; name: 'substring'; args: expr_list; }
       const separator = []
       const args = { type: 'expr_list', value: [s] }
