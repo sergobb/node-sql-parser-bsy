@@ -20,6 +20,10 @@ function windowSpecificationToSQL(windowSpec) {
 
 function asWindowSpecToSQL(asWindowSpec) {
   if (typeof asWindowSpec === 'string') return asWindowSpec
+  if ('name' in asWindowSpec) {
+    if (asWindowSpec.parentheses) return `(${asWindowSpec.name})`
+    return asWindowSpec.name
+  }
   const { window_specification: windowSpec } = asWindowSpec
   return `(${windowSpecificationToSQL(windowSpec)})`
 }

@@ -3733,7 +3733,12 @@ named_window_expr
   }
 
 as_window_specification
-  = ident_name
+  = wn:ident_name {
+    return {
+      name: wn,
+      parentheses: false      
+    }
+  }
   / LPAREN __ ws:window_specification? __ RPAREN {
     // => { window_specification: window_specification; parentheses: boolean }
     return {
@@ -3742,7 +3747,10 @@ as_window_specification
     }
   }
   / LPAREN __ wn:ident_name __ RPAREN {
-    return `(${wn})`
+    return {
+      name: wn,
+      parentheses: true
+    }
   }
 
 window_specification
@@ -4451,14 +4459,28 @@ additive_operator
   = "+" / "-"
 
 multiplicative_expr
-  = head:unary_expr_or_primary
-    tail:(__  (multiplicative_operator / LOGIC_OPERATOR)  __ unary_expr_or_primary)* {
+  = head:power_expr
+    tail:(__  multiplicative_operator  __ power_expr)* {
       // => binary_expr
+      if (tail && tail.length && head.type === 'column_ref' && head.column === '*') throw new Error(JSON.stringify({
+        message: 'args could not be star column in additive expr',
+        ...getLocationObject(),
+      }))
       return createBinaryExprChain(head, tail)
     }
 
 multiplicative_operator
   = "*" / "/" / "%" / "||"
+
+power_expr
+  = head:unary_expr_or_primary
+    tail:(__  (power_operator / LOGIC_OPERATOR)  __ unary_expr_or_primary)* {
+      // => binary_expr
+      return createBinaryExprChain(head, tail)
+    }
+
+power_operator
+  = "^"
 
 column_ref_array_index
   = c:column_ref __ a:array_index_list? __ cs:column_item_suffix* {
